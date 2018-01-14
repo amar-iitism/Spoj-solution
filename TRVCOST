@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long int
+vector<pair<ll,ll> > v[1507];
+long long int dis[1507];
+#define pp pair<ll,ll>
+void dijkstra(int s)
+{
+  for(int i=0;i<1507;i++)
+  dis[i]=1000000009;
+  dis[s]=0;
+  priority_queue<pp,vector<pp>,greater<pp> > q;
+  q.push({0,s});
+  while(!q.empty())
+  {
+  ll a=q.top().second;
+  ll b=q.top().first;
+  q.pop();
+  if(dis[a]<b)
+    continue;
+  for(int i=0;i<v[a].size();i++)
+  {
+   ll c=v[a][i].first;
+   ll d=v[a][i].second;
+   if(dis[c]>dis[a]+d )
+   {
+    dis[c]=dis[a]+d;
+    q.push({d,c});
+   }
+  }
+  }
+}
+
+int main()
+{
+  int m;
+  cin>>m;
+  for(int i=0;i<m;i++)
+  {
+   int a,b,c;
+   cin>>a>>b>>c;
+   v[a].push_back({b,c});
+   v[b].push_back({a,c});
+  }
+  int s;
+  cin>>s;
+  dijkstra(s);
+  int q;
+  cin>>q;
+  while(q--)
+  {
+   int e;
+   cin>>e;
+   if(dis[e]==1000000009)
+   cout<<"NO PATH"<<endl;
+   else
+   cout<<dis[e]<<endl;
+  }
+}
