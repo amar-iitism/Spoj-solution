@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+using namespace std;
+vector<int> v[10007];
+vector<pair<int,int> > vt;
+int low[10007],vis[10007],disc[10007],p[10007];
+int  ap[10007];
+
+int n,m;
+void inti()
+{ for(int i=0;i<10007;i++)
+  v[i].clear();
+  memset(p,-1,sizeof(p));
+  memset(vis,0,sizeof(vis));
+  memset(low,0,sizeof(low));
+  memset(disc,0,sizeof(disc));
+ memset(ap,0,sizeof(ap));
+
+}
+
+void dfs_ap(int x,int time)
+{
+  vis[x]=1;
+  disc[x]=low[x]=time+1;
+  int child=0;
+  for(int i=0;i<v[x].size();i++)
+  {
+    int y=v[x][i];
+    if(vis[y]==0)
+    {
+      child++;
+      vis[y]=1;
+      p[y]=x;
+      dfs_ap(y,time+1);
+      low[x]=min(low[x],low[y]);
+      if(p[x]==-1 && child>1)
+      ap[x]=1;
+      if(p[x]!=-1 && low[y]>=disc[x])
+      ap[x]=1;
+    }
+    else if(p[x]!=y)
+    {
+     low[x]=min(low[x],disc[y]);
+    }
+  }
+}
+
+
+
+void articulation_points()
+{
+  dfs_ap(1,0);
+  int ans=0;
+  for(int i=0;i<n;i++)
+    if(ap[i]==1)
+    ans++;
+  cout<<ans<<endl;
+}
+
+int main()
+{
+ cin>>n>>m;
+ while(1)
+ {
+    if(n==0 && m==0 )
+        break;
+ inti();
+ for(int i=0;i<m;i++)
+ {
+  int a,b;
+  cin>>a>>b;
+  v[a].push_back(b);
+  v[b].push_back(a);
+ }
+ articulation_points();
+ cin>>n>>m;
+ }
+}
