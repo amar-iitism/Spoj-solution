@@ -1,0 +1,89 @@
+#include<bits/stdc++.h>
+using namespace std;
+vector<int> v[703];
+vector<pair<int,int> > vt;
+int low[703],vis[703],disc[703],p[703];
+int n,m,k;
+
+bool cmp(pair<int,int> a,pair<int,int> b)
+{
+  if(a.first<b.first)
+  return true;
+  else if(a.first==b.first)
+  {
+   if(a.second<b.second)
+   return true;
+  }
+  return false;
+}
+
+void inti()
+{ for(int i=0;i<703;i++)
+  v[i].clear();
+  vt.clear();
+  memset(p,-1,sizeof(p));
+  memset(vis,0,sizeof(vis));
+  memset(low,0,sizeof(low));
+  memset(disc,0,sizeof(disc));
+}
+
+
+void dfs_b(int x,int time)
+{
+  vis[x]=1;
+  disc[x]=low[x]=time+1;
+  for(int i=0;i<v[x].size();i++)
+  {
+    int y=v[x][i];
+    if(vis[y]==0)
+    {
+      vis[y]=1;
+      p[y]=x;
+      dfs_b(y,time+1);
+      low[x]=min(low[x],low[y]);
+      if(low[y]>disc[x])
+      vt.push_back({min(x,y),max(x,y)});
+    }
+    else if(p[x]!=y)
+    {
+     low[x]=min(low[x],disc[y]);
+    }
+  }
+}
+
+void bridges()
+{ dfs_b(1,0);
+  int kt=vt.size();
+  sort(vt.begin(),vt.end(),cmp);
+  cout<<"Caso #"<<k<<endl;
+  if(kt==0)
+    cout<<"Sin bloqueos"<<endl;
+  else{
+  cout<<kt<<endl;
+  for(int i=0;i<kt;i++)
+  cout<<vt[i].first<<" "<<vt[i].second<<endl;
+ }
+  return ;
+}
+
+int main()
+{ int t;
+cin>>t;
+ k=1;
+ while(t--)
+{inti();
+ cin>>n>>m;
+ for(int i=0;i<m;i++)
+ {
+  int a,b;
+  cin>>a>>b;
+  v[a].push_back(b);
+  v[b].push_back(a);
+ }
+ //inti();
+ //articulation_points();
+ //inti();
+ bridges();
+ k++;
+}
+}
