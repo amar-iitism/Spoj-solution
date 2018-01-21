@@ -1,0 +1,130 @@
+#include<bits/stdc++.h>
+using namespace std;
+int p[100007],dis[100007];
+vector<pair<int,int> > v[100007];
+vector<pair<int,int> > avoid_edges;
+#define pp pair<int,int>
+int n,m,s,d;
+
+void store_edges(int xl,int px)
+{
+  while(px!=-1)
+  {
+   avoid_edges.push_back({xl,px});
+   xl=px;
+   px=p[px];
+  }
+}
+
+
+
+ void dijkstra1()
+ {
+  priority_queue<pp,vector<pp>,greater<pp> > pq;
+  pq.push({0,s});
+  dis[s]=0;
+  while(!pq.empty())
+  {
+   int xd=pq.top().first;
+   int x=pq.top().second;
+   pq.pop();
+   if(dis[x]<xd)
+   continue;
+   for(int i=0;i<v[x].size();i++)
+   {
+    int y=v[x][i].first;
+    int yd=v[x][i].second;
+    if(y==d)
+    {
+     if(dis[y]==dis[x]+yd)
+     {store_edges(y,x);
+     continue;}
+    }
+    if(dis[y]>dis[x]+yd)
+    {
+     dis[y]=dis[x]+yd;
+     p[y]=x;
+     pq.push({dis[x]+yd,y});
+     if(y==d)
+     {
+      avoid_edges.clear();
+      store_edges(y,x);
+     }
+    }
+   }
+
+  }
+
+ }
+
+
+ void dijkstra2()
+ {
+   priority_queue<pp,vector<pp>,greater<pp> > pq;
+   pq.push({0,s});
+   dis[s]=0;
+   while(!pq.empty())
+   {
+    int x=pq.top().second;
+    int xd=pq.top().first;
+    pq.pop();
+    if(dis[x]<xd)
+    continue;
+    for(int i=0;i<v[x].size();i++)
+    {
+      int y=v[x][i].first;
+      int yd=v[x][i].second;
+      //if(find(edgesToAvoid.begin(),edgesToAvoid.end(),ii(top.first,x.first))==edgesToAvoid.end())
+      if(find(avoid_edges.begin(),avoid_edges.end(),make_pair(y,x))==avoid_edges.end())
+      {
+         if(dis[y]>dis[x]+yd)
+         {
+          dis[y]=dis[x]+yd;
+          pq.push({dis[x]+yd,y});
+         }
+      }
+    }
+   }
+ }
+
+
+
+
+
+int main()
+{
+  cin>>n>>m;
+  while(1)
+  {
+   if(n==0 && m==0)
+   break;
+   cin>>s>>d;
+   for(int i=0;i<100007;i++)
+    v[i].clear();
+   avoid_edges.clear();
+   for(int i=0;i<m;i++)
+   {
+    int a,b,c;
+    cin>>a>>b>>c;
+    v[a].push_back({b,c});
+   }
+   memset(p,-1,sizeof(p));
+   for(int i=0;i<100007;i++)
+   dis[i]=1000000009;
+   dijkstra1();
+   if(dis[d]>100000009)
+   cout<<"-1"<<endl;
+   else
+   {
+   memset(p,-1,sizeof(p));
+   for(int i=0;i<100007;i++)
+   dis[i]=1000000009;
+   dijkstra2();
+   if(dis[d]>100000009)
+   cout<<"-1"<<endl;
+   else
+   cout<<dis[d]<<endl;
+   }
+   cin>>n>>m;
+  }
+}
