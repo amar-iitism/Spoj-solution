@@ -1,0 +1,111 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,k,s,t;
+#define pp pair<int,int>
+vector<pair<int,int> > v[10007],vt[10007];
+int dis[10007],rdis[10007];
+vector<pair<int,pair<int,int> > > vl;
+
+void dijkstra1()
+{
+  priority_queue<pp,vector<pp>,greater<pp> > pq;
+  pq.push({0,s});
+  dis[s]=0;
+  while(!pq.empty())
+  {
+   int x=pq.top().second;
+   int xd=pq.top().first;
+   pq.pop();
+   if(dis[x]<xd)
+   continue;
+   for(int i=0;i<v[x].size();i++)
+   {
+    int y=v[x][i].first;
+    int yd=v[x][i].second;
+    if(dis[y]>dis[x]+yd)
+    {
+     dis[y]=dis[x]+yd;
+     pq.push({dis[x]+xd,y});
+    }
+   }
+  }
+}
+
+void dijkstra2()
+{
+   priority_queue<pp,vector<pp>,greater<pp> > pq;
+   pq.push({0,t});
+   rdis[t]=0;
+   while(!pq.empty())
+   {
+    int x=pq.top().second;
+    int xd=pq.top().first;
+    pq.pop();
+    if(rdis[x]<xd)
+    continue;
+    for(int i=0;i<vt[x].size();i++)
+    {
+     int y=vt[x][i].first;
+     int yd=vt[x][i].second;
+     if(rdis[y]>rdis[x]+yd)
+     {rdis[y]=rdis[x]+yd;
+     pq.push({rdis[x]+yd,y});}
+    }
+   }
+}
+
+
+
+
+
+int main()
+{
+  int tl;
+  cin>>tl;
+  while(tl--)
+  { vl.clear();
+  for(int i=0;i<10007;i++)
+    {
+    v[i].clear();
+    vt[i].clear();
+    dis[i]=1000000009;
+    rdis[i]=1000000009;
+    }
+    cin>>n>>m>>k>>s>>t;
+    for(int i=0;i<m;i++)
+    {
+     int a,b,c;
+     cin>>a>>b>>c;
+     v[a].push_back({b,c});
+     vt[b].push_back({a,c});
+    }
+
+    for(int i=0;i<k;i++)
+    {
+     int a,b,c;
+     cin>>a>>b>>c;
+     vl.push_back({a,{b,c}});
+    }
+    dijkstra1();
+    if(dis[t]==1000000009)
+    cout<<"-1"<<endl;
+    else
+    {
+     dijkstra2();
+     int kt=vl.size();
+     int dist=dis[t];
+     for(int i=0;i<kt;i++)
+     {
+      int a,b,c;
+      a=vl[i].first;
+      b=vl[i].second.first;
+      c=vl[i].second.second;
+      int dist1=0,dist2=0;
+      dist1=dis[a]+c+rdis[b];
+      dist2=dis[b]+c+rdis[a];
+      dist=min(dist,min(dist1,dist2));
+     }
+     cout<<dist<<endl;
+    }
+  }
+}
