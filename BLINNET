@@ -1,0 +1,74 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+long long int sizel[10007],p[10007];
+vector<pair<int,pair<int,int> > > v;
+
+int root(int x)
+{
+  while(p[x]!=x)
+  {
+   p[x]=p[p[x]];
+   x=p[x];
+  }
+  return x;
+}
+
+ void unionl(int x,int y)
+ {
+  int pl=root(x);
+  int ql=root(y);
+  if(sizel[pl]>=sizel[ql])
+  {
+   sizel[pl]+=sizel[ql];
+   p[ql]=pl;
+  }
+  else if(sizel[pl]<sizel[ql])
+  {
+   sizel[ql]+=sizel[pl];
+   p[pl]=ql;
+  }
+ }
+
+int main()
+{
+  int t;
+  cin>>t;
+  while(t--)
+  { v.clear();
+    cin>>n;
+    for(int i=1;i<=n;i++)
+    {
+     string s;
+     cin>>s;
+     int d;
+     cin>>d;
+     for(int j=0;j<d;j++)
+     {
+      int a,b;
+      cin>>a>>b;
+      v.push_back({b,{i,a}});
+     }
+    }
+    sort(v.begin(),v.end());
+    for(int i=0;i<10007;i++)
+    {
+     p[i]=i;
+     sizel[i]=1;
+    }
+    long long int mincost=0;
+    int kt=v.size();
+    for(int i=1;i<=kt;i++)
+    {
+     int a=v[i].second.first;
+     int b=v[i].second.second;
+     int c=v[i].first;
+     if(root(a)!=root(b))
+     {
+      unionl(a,b);
+      mincost+=c;
+     }
+    }
+    cout<<mincost<<endl;
+  }
+}
