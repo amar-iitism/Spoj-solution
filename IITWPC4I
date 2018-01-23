@@ -1,0 +1,88 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m;
+int p[100007],sizel[100007];
+vector<pair<int,pair<int,int>>> v;
+
+uint32_t root(int x)
+{
+  while(x!=p[x])
+  {
+   p[x]=p[p[x]];
+   x=p[x];
+  }
+  return x;
+}
+
+void unionl(int a,int b)
+{
+  int pl=root(a);
+  int ql=root(b);
+  if(sizel[pl]>=sizel[ql])
+  {
+   sizel[pl]+=sizel[ql];
+   p[ql]=pl;
+  }
+  else if(sizel[ql]>sizel[pl])
+  {
+   sizel[ql]+=sizel[pl];
+   p[pl]=ql;
+  }
+}
+
+int main()
+{
+  int t;
+  cin>>t;
+
+  while(t--)
+  {
+   cin>>n>>m;
+   v.clear();
+   for(int i=1;i<=n;i++)
+   {
+    int a;
+    cin>>a;
+    if(a==1)
+    {
+    v.push_back({0,{0,i}});
+    }
+   }
+   for(int i=0;i<m;i++)
+   {
+    int a,b,c;
+    cin>>a>>b>>c;
+    v.push_back({c,{a,b}});
+   }
+   for(int i=0;i<100007;i++)
+   {
+    p[i]=i;
+    sizel[i]=1;
+   }
+   long long int mincost=0;
+   sort(v.begin(),v.end());
+   for(int i=0;i<v.size();i++)
+   {
+    int a,b,c;
+    a=v[i].second.first;
+    b=v[i].second.second;
+    c=v[i].first;
+    if(root(a)!=root(b))
+    {
+     unionl(a,b);
+     mincost+=c;
+    }
+   }
+   int  flag=1;
+   for(int i=1;i<=n;i++)
+   {
+       if(root(i)!=root(0))
+        {flag=0;
+        break;}
+   }
+   if(flag==0)
+    cout<<"impossible"<<endl;
+   else
+    cout<<mincost<<endl;
+  }
+}
